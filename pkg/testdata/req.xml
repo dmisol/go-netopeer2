@@ -1,0 +1,5 @@
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="2">
+    <get-data xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-nmda">
+        <datastore xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">ds:running</datastore>
+    </get-data>
+</rpc>

@@ -1,0 +1,1 @@
+<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"><rpc-error><error-type>rpc</error-type><error-tag>malformed-message</error-tag><error-severity>error</error-severity><error-message xml:lang="en">A message could not be handled because it failed to be parsed correctly.</error-message></rpc-error></rpc-reply>

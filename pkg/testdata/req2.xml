@@ -1,0 +1,6 @@
+<rpc xmlns="urn:ietf:params:xml:ns:netconf:base:1.0" message-id="1">
+    <get-schema xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring">
+        <identifier>ietf-datastores</identifier>
+        <format>yang</format>
+    </get-schema>
+</rpc>
