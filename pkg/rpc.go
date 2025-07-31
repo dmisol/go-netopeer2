@@ -23,6 +23,16 @@ type RpcReply struct {
 	MessageID int64    `xml:"message-id,attr"`
 	Data      RawData  `xml:"data"`
 }
+
+type Notification struct {
+	XMLName             xml.Name `xml:"notification"`
+	Text                string   `xml:",chardata"`
+	Xmlns               string   `xml:"xmlns,attr"`
+	EventTime           string   `xml:"eventTime"` // 2025-07-25T12:00:13.76997...
+	NetconfRpcExecution *RawData `xml:"netconf-rpc-execution"`
+	NetconfConfigChange *RawData `xml:"netconf-config-change"`
+}
+
 type RawData struct {
 	Data []byte
 }

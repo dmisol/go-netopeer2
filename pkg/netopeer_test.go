@@ -19,6 +19,8 @@ func TestNP(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	np.Subscribe(callBack)
+
 	b := []byte(`<get-data xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-nmda"><datastore xmlns:ds="urn:ietf:params:xml:ns:yang:ietf-datastores">ds:running</datastore></get-data>`)
 	for i := 0; i < 5; i++ {
 		np.Request(b, callBack)

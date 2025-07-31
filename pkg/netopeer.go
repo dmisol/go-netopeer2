@@ -10,6 +10,10 @@ import (
 
 type Cb func([]byte, error)
 
+var (
+	sr = []byte(`<create-subscription xmlns="urn:ietf:params:xml:ns:netconf:notification:1.0"/>`)
+)
+
 func NewNetopeer(ctx context.Context, unix string) (np *Netopeer, err error) {
 	np = &Netopeer{
 		ch:   make(chan Resp, 10),
@@ -50,8 +54,22 @@ func (np *Netopeer) Request(data []byte, cb Cb) {
 	}()
 }
 
-func (np *Netopeer) Subscribe(data interface{}, cb Cb) {
+func (np *Netopeer) Subscribe(cb Cb) {
+	func() {
+		np.mu.Lock()
+		defer np.mu.Unlock()
 
+		np.subs = cb
+	}()
+	go func() {
+		idx := atomic.AddInt64(&np.seq, 1)
+
+		req := &Rpc{
+			Xmlns:     "urn:ietf:params:xml:ns:netconf:base:1.0", // fixme!
+			MessageID: idx,
+			Data:      string(sr)}
+		np.sock.Send(req.Marshal(), false)
+	}()
 }
 
 func (np *Netopeer) storeCb(idx int64, cb Cb) {
@@ -84,8 +102,21 @@ func (np *Netopeer) run(ctx context.Context) {
 			} else {
 				rr := &RpcReply{}
 				if err := xml.Unmarshal(r.Body, rr); err != nil {
-					// np.Println("rx unmarshal err", err, "->", string(r.Body))
-					// todo.. hello is also here
+
+					nf := &Notification{}
+					if err := xml.Unmarshal(r.Body, nf); err != nil {
+						np.Println("notif unmarshal err", err)
+						// todo.. hello is also here
+						continue
+					}
+					if np.subs != nil {
+						if nf.NetconfRpcExecution != nil {
+							np.subs(nf.NetconfRpcExecution.Data, nil)
+						}
+						if nf.NetconfConfigChange != nil {
+							np.subs(nf.NetconfConfigChange.Data, nil)
+						}
+					}
 					continue
 				}
 				cb := np.chkAndRemove(rr.MessageID)
