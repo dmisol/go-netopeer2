@@ -19,7 +19,7 @@ func NewNetopeer(ctx context.Context, unix string) (np *Netopeer, err error) {
 		ch:   make(chan Resp, 10),
 		reqs: make(map[int64]Cb),
 	}
-	np.sock, err = NewUsock(context.Background(), TestSock, np.ch)
+	np.sock, err = NewUsock(context.Background(), unix, np.ch)
 	if err != nil {
 		return
 	}
